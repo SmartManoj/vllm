@@ -75,16 +75,17 @@ class OpenVinoPlatform(Platform):
 
         # check and update model config
         model_config = vllm_config.model_config
-        if model_config.dtype != torch.float32:
-            logger.warning(
-                f"Only float32 dtype is supported on OpenVINO, casting from {model_config.dtype}."  # noqa: G004, E501
-            )
-            model_config.dtype = torch.float32
-        if not model_config.enforce_eager:
-            logger.warning(
-                "CUDA graph is not supported on OpenVINO backend, fallback to "
-                "the eager mode.")
-            model_config.enforce_eager = True
+        if model_config:
+            if model_config.dtype != torch.float32:
+                logger.warning(
+                    f"Only float32 dtype is supported on OpenVINO, casting from {model_config.dtype}."  # noqa: G004, E501
+                )
+                model_config.dtype = torch.float32
+            if not model_config.enforce_eager:
+                logger.warning(
+                    "CUDA graph is not supported on OpenVINO backend, fallback to "
+                    "the eager mode.")
+                model_config.enforce_eager = True
 
         # check and update cache config
         ov_core = ov.Core()
